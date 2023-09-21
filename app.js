@@ -4,6 +4,7 @@ import passport from "passport";
 import passport_setup from "./passport_setup.js";
 import morgan from "morgan";
 import UserModel from "./models/user.model.js";
+import cors from "cors";
 
 const app = express();
 
@@ -11,6 +12,12 @@ app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(sessionMiddleware);
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        credentials: true,
+    })
+);
 // PASSPORT
 app.use(passport.initialize());
 app.use(passport.session());
@@ -52,6 +59,37 @@ app.post("/login", (req, res) => {
             return res.status(200).json({ ok: true, data: user });
         });
     })(req, res);
+});
+
+app.use((req, res, next) => {
+    if (req.isAuthenticated()) return next();
+    return res.status(401).json({ ok: false, error: "Un-authorized" });
+});
+
+app.get("/me", (req, res) => {
+    return res.status(200).json({
+        ok: true,
+        data: req.user,
+    });
+});
+
+app.post("/logout", (req, res) => {
+    req.logOut((err) => {
+        if (err)
+            return res.status(500).json({
+                ok: false,
+                error: "INTERNAL SERVER ERROR",
+            });
+        return res.status(200).json({
+            ok: true,
+            message: "Logged out successfully",
+        });
+    });
+});
+
+app.get("/all-users", async (req, res) => {
+    const users = await UserModel.find();
+    return res.status(200).json({ ok: true, data: users });
 });
 
 export default app;

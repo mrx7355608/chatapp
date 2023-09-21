@@ -11,11 +11,12 @@ const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
     cors: {
         origin: "http://localhost:5173",
+        credentials: true,
     },
 });
 
 // Sockets
-io.use(sessionMiddleware);
+io.engine.use(sessionMiddleware);
 socketHandler(io);
 
 // Listening on port 8000

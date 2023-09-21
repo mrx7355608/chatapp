@@ -1,8 +1,13 @@
 export default function socketHandler(io) {
     io.on("connection", (socket) => {
-        const session = socket.request.session;
-        console.log("Socket ID:", socket.id);
-        console.log("Session ID:", session.sessionID);
-        console.log("User ID:", session.passport.user);
+        const { session } = socket.request;
+        const userId = session.passport.user;
+
+        socket.join(userId);
+
+        socket.on("private message", (data) => {
+            console.log(data);
+            socket.to(data.to).to(userId).emit("private message", data);
+        });
     });
 }
