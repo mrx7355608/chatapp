@@ -34,8 +34,8 @@ async function insert(user) {
     return {
         _id: newUser._id,
         fullname: newUser.fullname,
-        status: newUser.status,
         profilePicture: newUser.profilePicture,
+        username: newUser.username,
     };
 }
 
