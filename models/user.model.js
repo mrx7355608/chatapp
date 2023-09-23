@@ -15,8 +15,17 @@ const userSchema = new Schema(
             type: String,
             required: true,
         },
+        profilePicture: {
+            type: String,
+            default: process.env.DEFAULT_PROFILE_PICTURE,
+        },
+        status: {
+            type: String,
+            default: "Offline",
+        },
     },
     {
+        timestamps: true,
         methods: {
             async verifyPassword(password) {
                 return await bcrypt.compare(password, this.password);
@@ -25,6 +34,8 @@ const userSchema = new Schema(
     }
 );
 
+// Hash password when a new user is created or
+// user updates his password
 userSchema.pre("save", async function (next) {
     if (this.isModified("password") || this.isNew) {
         const hashedPassword = await bcrypt.hash(this.password, 11);
@@ -35,4 +46,5 @@ userSchema.pre("save", async function (next) {
 });
 
 const UserModel = model("User", userSchema);
+
 export default UserModel;
