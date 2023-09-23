@@ -5,8 +5,14 @@ async function listAllUsers() {
     return users;
 }
 
+async function updateUserState(userId, newState) {
+    const updatedUser = await usersDB.update(userId, { status: newState });
+    return updatedUser;
+}
+
 const userServices = {
     listAllUsers,
+    updateUserState,
 };
 
 export default userServices;

@@ -39,7 +39,13 @@ async function insert(user) {
     };
 }
 
-// async function update() {}
+async function update(id, changes) {
+    const updatedUser = await UserModel.findByIdAndUpdate(id, changes, {
+        new: true,
+    });
+    return updatedUser;
+}
+
 // async function deleteUser() {}
 
 const usersDB = {
@@ -47,6 +53,7 @@ const usersDB = {
     findByUsername,
     findById,
     insert,
+    update,
 };
 
 export default usersDB;
