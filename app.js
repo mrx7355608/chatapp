@@ -7,6 +7,7 @@ import UserModel from "./models/user.model.js";
 import cors from "cors";
 import { catch404, globalErrorHandler } from "./utils/errorHandlers.js";
 import authRouter from "./routes/auth.routes.js";
+import userRouter from "./routes/user.routes.js";
 
 const app = express();
 
@@ -27,18 +28,7 @@ passport_setup(passport);
 
 // ROUTES
 app.use("/auth", authRouter);
-
-app.get("/me", (req, res) => {
-    return res.status(200).json({
-        ok: true,
-        data: req.user,
-    });
-});
-
-app.get("/all-users", async (req, res) => {
-    const users = await UserModel.find();
-    return res.status(200).json({ ok: true, data: users });
-});
+app.use("/users", userRouter);
 
 // ERROR HANDLERS
 app.use(catch404);
