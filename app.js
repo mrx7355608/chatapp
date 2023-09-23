@@ -5,6 +5,7 @@ import passport_setup from "./passport_setup.js";
 import morgan from "morgan";
 import UserModel from "./models/user.model.js";
 import cors from "cors";
+import { catch404, globalErrorHandler } from "./utils/errorHandlers.js";
 
 const app = express();
 
@@ -91,5 +92,9 @@ app.get("/all-users", async (req, res) => {
     const users = await UserModel.find();
     return res.status(200).json({ ok: true, data: users });
 });
+
+// ERROR HANDLERS
+app.use(catch404);
+app.use(globalErrorHandler);
 
 export default app;
