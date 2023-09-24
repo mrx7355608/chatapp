@@ -1,4 +1,4 @@
-import MessageModel from "../models/message.model";
+import MessageModel from "../models/message.model.js";
 
 async function insert(sender_id, receiver_id, text) {
     const newMessage = await MessageModel.create({
@@ -7,6 +7,11 @@ async function insert(sender_id, receiver_id, text) {
         text,
     });
     return newMessage;
+}
+
+async function insertInBulk(messages) {
+    const newMessages = await MessageModel.create(messages);
+    return newMessages;
 }
 
 async function findMyMessages(myId, receiverId) {
@@ -22,6 +27,7 @@ async function findMyMessages(myId, receiverId) {
 const messagesDB = {
     findMyMessages,
     insert,
+    insertInBulk,
 };
 
 export default messagesDB;

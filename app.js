@@ -3,11 +3,11 @@ import sessionMiddleware from "./middlewares/sessions.js";
 import passport from "passport";
 import passport_setup from "./passport_setup.js";
 import morgan from "morgan";
-import UserModel from "./models/user.model.js";
 import cors from "cors";
 import { catch404, globalErrorHandler } from "./utils/errorHandlers.js";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
+import messagesRouter from "./routes/messages.routes.js";
 
 const app = express();
 
@@ -29,6 +29,7 @@ passport_setup(passport);
 // ROUTES
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
+app.use("/messages", messagesRouter);
 
 // ERROR HANDLERS
 app.use(catch404);
