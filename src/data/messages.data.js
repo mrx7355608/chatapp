@@ -10,7 +10,7 @@ async function insert(sender_id, receiver_id, text) {
 }
 
 async function insertInBulk(messages) {
-    const newMessages = await MessageModel.create(messages);
+    const newMessages = await MessageModel.insertMany(messages);
     return newMessages;
 }
 

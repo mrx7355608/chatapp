@@ -5,14 +5,14 @@ async function listMyMessages(myId, receiverId) {
     return myMessages;
 }
 
-async function addNewMessages(messages) {
+async function addMessagesInBulk(messages) {
     const newMessages = await messagesDB.insertInBulk(messages);
     return newMessages;
 }
 
 const messagesServices = {
     listMyMessages,
-    addNewMessages,
+    addMessagesInBulk,
 };
 
 export default messagesServices;
