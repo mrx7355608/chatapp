@@ -2,14 +2,19 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
     {
+        // I added this field so that I can verify, whether or not the
+        // actual sender of the message is deleting his message.
         sender_id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            type: String,
+            required: true,
         },
-        receiver_id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+
+        // It helps in organizing messages and ease their management
+        conversation_id: {
+            type: String,
+            required: true,
         },
+
         text: {
             type: String,
             required: true,

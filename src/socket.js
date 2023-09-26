@@ -1,6 +1,5 @@
 import { isAuth } from "./middlewares/isAuthSocket.js";
 import userServices from "./services/user.services.js";
-import messagesServices from "./services/messages.services.js";
 import morgan from "morgan";
 
 let onlineUsers = [];
@@ -13,16 +12,15 @@ export default function socketHandler(io) {
     // Middleware to allow authenticated requests only
     io.use(isAuth);
 
-    setInterval(async () => {
-        if (messages.length < 1) return;
-        console.log("adding messages in database");
-        await messagesServices.addMessagesInBulk(messages);
-    }, 20000);
+    // Adds messages in database after every 20 seconds
+    // setInterval(async () => {
+    //     if (messages.length < 1) return;
+    //     console.log("adding messages in database");
+    //     await messagesServices.addMessagesInBulk(messages);
+    // }, 20000);
 
     io.on("connection", async (socket) => {
         const userId = socket.userId;
-
-        console.log(messages);
 
         // ------- RECONNECTION / PAGE REFRESH HANDLING LOGIC -------
         // If user connects to socketServer for
@@ -52,7 +50,6 @@ export default function socketHandler(io) {
                 onlineUsers = onlineUsers.filter((id) => id !== userId);
                 await userServices.updateUserState(userId, "Offline");
                 io.emit("user disconnected", userId);
-                console.log("user disconnected");
             }, 8000);
         });
     });

@@ -7,7 +7,7 @@ import cors from "cors";
 import { catch404, globalErrorHandler } from "./utils/errorHandlers.js";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
-import messagesRouter from "./routes/messages.routes.js";
+import conversationRouter from "./routes/conversations.routes.js";
 
 const app = express();
 
@@ -29,7 +29,7 @@ passport_setup(passport);
 // ROUTES
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
-app.use("/messages", messagesRouter);
+app.use("/conversations", conversationRouter);
 
 // ERROR HANDLERS
 app.use(catch404);
