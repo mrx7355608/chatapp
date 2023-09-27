@@ -3,7 +3,7 @@ import ConversationModel from "../models/conversations.model.js";
 async function findAll(userID) {
     const conversations = await ConversationModel.find({
         participants: { $in: [userID] },
-    }).populate("participants", "profilePicture fullname username");
+    }).populate("participants", "profilePicture fullname username status");
 
     return conversations;
 }
