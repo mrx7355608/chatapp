@@ -6,10 +6,17 @@ const getAllConversations = asyncErrorHandler(async (req) => {
     const conversations = await conversationServices.listMyAllConversations(
         myID
     );
+    const formattedConvos = conversations.map((c) => {
+        return {
+            _id: c._id,
+            participants: c.participants,
+            createdAt: c.createdAt,
+        };
+    });
     return {
         statusCode: 200,
         message: "",
-        data: conversations,
+        data: formattedConvos,
     };
 });
 
