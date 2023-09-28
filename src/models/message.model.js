@@ -10,7 +10,7 @@ const messageSchema = new mongoose.Schema(
         },
 
         // It helps in organizing messages and ease their management
-        conversation_id: {
+        receiver_id: {
             type: String,
             required: true,
         },

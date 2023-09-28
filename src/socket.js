@@ -1,30 +1,29 @@
 import { isAuth } from "./middlewares/isAuthSocket.js";
 import userServices from "./services/user.services.js";
-import morgan from "morgan";
+import messagesServices from "./services/messages.services.js";
 
 let onlineUsers = [];
 const messages = [];
 let disconnectionTimerId;
 
 export default function socketHandler(io) {
-    io.engine.use(morgan("dev"));
-
     // Middleware to allow authenticated requests only
     io.use(isAuth);
 
     // Adds messages in database after every 20 seconds
-    // setInterval(async () => {
-    //     if (messages.length < 1) return;
-    //     console.log("adding messages in database");
-    //     await messagesServices.addMessagesInBulk(messages);
-    // }, 20000);
+    setInterval(async () => {
+        if (messages.length < 1) return;
+        console.log("adding messages in database");
+        await messagesServices.addMessagesInBulk(messages);
+    }, 20000);
 
     io.on("connection", async (socket) => {
         const userId = socket.userId;
 
-        // ------- RECONNECTION / PAGE REFRESH HANDLING LOGIC -------
-        // If user connects to socketServer for
-        // the first time, update its status to "online"
+        socket.join(userId);
+
+        // ------- PAGE REFRESH / RELOAD HANDLING LOGIC -------
+        // TODO: write description of what below functionality does and how
         if (!onlineUsers.includes(userId)) {
             onlineUsers.push(userId);
             await userServices.updateUserState(userId, "Online");
@@ -35,14 +34,12 @@ export default function socketHandler(io) {
             clearTimeout(disconnectionTimerId);
         }
 
-        socket.join(userId);
-
-        socket.on("private message send", (data) => {
+        socket.on("private message send", (messageObject) => {
             socket
-                .to(data.receiver_id)
-                .to(data.sender_id)
-                .emit("private message received", data);
-            messages.push(data);
+                .to(messageObject.receiver_id)
+                .to(userId)
+                .emit("private message received", messageObject);
+            messages.push(messageObject);
         });
 
         socket.on("disconnect", async () => {
