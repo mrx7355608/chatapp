@@ -3,7 +3,7 @@ import userServices from "./services/user.services.js";
 import messagesServices from "./services/messages.services.js";
 
 let onlineUsers = [];
-const messages = [];
+let messages = [];
 let disconnectionTimerId;
 
 export default function socketHandler(io) {
@@ -12,9 +12,13 @@ export default function socketHandler(io) {
 
     // Adds messages in database after every 20 seconds
     setInterval(async () => {
-        if (messages.length < 1) return;
-        console.log("adding messages in database");
-        await messagesServices.addMessagesInBulk(messages);
+        if (messages.length > 0) {
+            console.log("adding messages in database");
+            await messagesServices.addMessagesInBulk(messages);
+            messages = [];
+        } else {
+            console.log("No messages were found");
+        }
     }, 20000);
 
     io.on("connection", async (socket) => {
@@ -28,10 +32,12 @@ export default function socketHandler(io) {
             onlineUsers.push(userId);
             await userServices.updateUserState(userId, "Online");
             io.emit("user connected", userId);
+            console.log("USER CONNECTED");
         } else {
             // If user is already in connected clients then don't
             // update his status (used to handle page refresh on frontend)
             clearTimeout(disconnectionTimerId);
+            console.log("USER RECONNECTED");
         }
 
         socket.on("private message send", (messageObject) => {
@@ -47,6 +53,7 @@ export default function socketHandler(io) {
                 onlineUsers = onlineUsers.filter((id) => id !== userId);
                 await userServices.updateUserState(userId, "Offline");
                 io.emit("user disconnected", userId);
+                console.log("USER DISCONNECTED");
             }, 8000);
         });
     });

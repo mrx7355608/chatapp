@@ -12,7 +12,9 @@ async function findAll(receiver_id, myId) {
                 receiver_id: myId,
             },
         ],
-    });
+    })
+        .sort("-createdAt")
+        .limit(10);
     return messages;
 }
 
